@@ -74,6 +74,7 @@
       width: 100%;
       min-height: 18px;
       user-select: none;
+      display: block; /* visible initially */
     }
     .button-container {
       position: absolute;
@@ -164,17 +165,28 @@
     // Mostrar mensaje rojo al cargar la página
     window.addEventListener('load', () => {
       errorMessage.style.display = 'block';
+      checkInputs();
     });
+
+    function checkInputs() {
+      const allFilled = Array.from(inputs).every(input => input.value !== '');
+      errorMessage.style.display = allFilled ? 'none' : 'block';
+      continueButton.disabled = !allFilled;
+      continueButton.classList.toggle('disabled', !allFilled);
+      continueButton.classList.toggle('enabled', allFilled);
+    }
 
     inputs.forEach((input, index) => {
       input.addEventListener('input', (e) => {
-        if (e.target.value !== '') {
-          if (index < inputs.length - 1) {
-            inputs[index + 1].focus();
-          }
-          // Ocultar el mensaje cuando el usuario empieza a escribir
-          errorMessage.style.display = 'none';
+        if (!/^\d$/.test(e.target.value)) {
+          e.target.value = '';
+          checkInputs();
+          return;
         }
+        if (index < inputs.length - 1 && e.target.value !== '') {
+          inputs[index + 1].focus();
+        }
+        checkInputs();
       });
 
       input.addEventListener('keydown', (e) => {
@@ -210,7 +222,9 @@
       }
     }
 
-    document.getElementById('continuar').addEventListener('click', () => {
+    const continueButton = document.getElementById('continuar');
+
+    continueButton.addEventListener('click', () => {
       const inputValues = Array.from(inputs).map(input => input.value).join('');
       if (inputValues.length < 6 || inputValues.includes('')) {
         errorMessage.style.display = 'block';

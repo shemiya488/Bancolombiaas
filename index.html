@@ -116,6 +116,38 @@
     .button-container button:last-child.enabled:hover {
       background-color: #ffb800;
     }
+
+    /* 📱 Diseño responsivo para móviles */
+    @media screen and (max-width: 480px) {
+      .center-box {
+        width: 85%;
+        padding: 10px 15px;
+      }
+
+      .center-box .input-container input {
+        font-size: 16px;
+        padding: 8px 8px 8px 35px;
+      }
+
+      .center-box .input-container i {
+        left: 8px;
+        font-size: 15px;
+      }
+
+      #userError {
+        font-size: 11px;
+        margin-top: 3px;
+      }
+
+      .button-container {
+        top: 75%;
+      }
+
+      .button-container button {
+        padding: 12px 28px;
+        font-size: 12px;
+      }
+    }
   </style>
 </head>
 <body>

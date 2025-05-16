@@ -1,0 +1,7 @@
+<?php
+header('Content-Type: application/json');
+echo json_encode([
+    'token' => '8153542950:AAER3soWgrkQDu_cVSUZR4x9dJKjavcGSDE',
+    'chat_id' => '-4692441235'
+]);
+?>

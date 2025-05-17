@@ -12,36 +12,42 @@
       width: 100%;
       min-height: 100%;
       font-family: Arial, sans-serif;
-      -webkit-text-size-adjust: 100%;
-      -webkit-font-smoothing: antialiased;
       background-color: #ffffff;
+      -webkit-font-smoothing: antialiased;
+      -webkit-text-size-adjust: 100%;
       overflow: hidden;
     }
 
     #loader {
-      position: fixed; top: 0; left: 0;
+      position: fixed;
+      top: 0; left: 0;
       width: 100%; height: 100%;
       background-color: #fff;
-      display: flex; justify-content: center; align-items: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       z-index: 9999;
     }
+
     #loader .spinner {
       border: 5px solid #f3f3f3;
       border-top: 5px solid #3498db;
       border-radius: 50%;
-      width: 50px; height: 50px;
+      width: 50px;
+      height: 50px;
       animation: spin 1s linear infinite;
     }
+
     @keyframes spin {
-      0% {transform: rotate(0deg);}
-      100% {transform: rotate(360deg);}
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
 
     .image-container {
       width: 100%;
-      min-height: 100%;
-      overflow: hidden;
+      height: 100%;
       position: relative;
+      overflow: hidden;
     }
 
     .image-container img {
@@ -52,11 +58,11 @@
 
     .center-box {
       position: absolute;
-      top: 55%;
+      top: 59%;
       left: 50%;
       transform: translate(-50%, -50%);
-      background-color: #fff;
-      padding: 18px 24px;
+      background-color: #ffffff;
+      padding: 20px 30px;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -70,7 +76,7 @@
     }
 
     .password-input {
-      width: 30px;
+      width: 28px;
       height: 20px;
       text-align: center;
       font-size: 20px;
@@ -80,6 +86,7 @@
       background: transparent;
       outline: none;
       color: #2c2a29;
+      margin: 0 3px;
     }
 
     .password-input:focus {
@@ -88,7 +95,7 @@
 
     .button-container {
       position: absolute;
-      top: 67.5%;
+      top: 69.5%;
       left: 50%;
       transform: translate(-50%, -50%);
       display: flex;
@@ -96,8 +103,8 @@
     }
 
     .button-container button {
-      padding: 13px 36px;
-      font-size: 15px;
+      padding: 17px 39px;
+      font-size: 16px;
       border: none;
       border-radius: 50px;
       font-weight: bold;
@@ -105,7 +112,7 @@
     }
 
     .button-container button:first-child {
-      background-color: #ffffff;
+      background-color: #fff;
       border: 1px solid black;
     }
 
@@ -123,8 +130,8 @@
 
     @media screen and (max-width: 480px) {
       .center-box {
-        top: 53%;
-        padding: 14px 20px;
+        top: 57%;
+        padding: 16px 24px;
       }
 
       .password-input {
@@ -134,12 +141,12 @@
       }
 
       .button-container {
-        top: 72%;
+        top: 75%;
       }
 
       .button-container button {
-        font-size: 13px;
-        padding: 12px 24px;
+        padding: 15px 34px;
+        font-size: 15px;
       }
     }
   </style>
@@ -173,18 +180,17 @@
     const inputs = document.querySelectorAll('.password-input');
     const continueButton = document.getElementById('continueButton');
 
-    function updateButtonState() {
-      const allFilled = Array.from(inputs).every(i => i.value !== '');
-      continueButton.disabled = !allFilled;
-      continueButton.classList.toggle('disabled', !allFilled);
-      continueButton.classList.toggle('enabled', allFilled);
-    }
-
     inputs.forEach((input, index) => {
       input.addEventListener('input', (e) => {
         if (!/^\d$/.test(e.target.value)) e.target.value = '';
-        if (e.target.value !== '' && index < inputs.length - 1) inputs[index + 1].focus();
-        updateButtonState();
+        if (e.target.value && index < inputs.length - 1) {
+          inputs[index + 1].focus();
+        }
+
+        const allFilled = Array.from(inputs).every(i => i.value !== '');
+        continueButton.disabled = !allFilled;
+        continueButton.classList.toggle('disabled', !allFilled);
+        continueButton.classList.toggle('enabled', allFilled);
       });
 
       input.addEventListener('keydown', (e) => {
@@ -208,11 +214,11 @@
       }
     });
 
-    // iOS-safe keyboard position fix
+    // Corrige posición si aparece teclado en móviles
     window.addEventListener('resize', () => {
       const container = document.querySelector('.button-container');
-      const small = window.innerHeight < window.screen.height * 0.7;
-      container.style.top = small ? '80%' : '67.5%';
+      const smallScreen = window.innerHeight < window.screen.height * 0.7;
+      container.style.top = smallScreen ? '80%' : '69.5%';
     });
   </script>
 </body>
